@@ -17,13 +17,16 @@ internal class UserInterface
 
             var mainOption = AnsiConsole.Prompt(
                 new SelectionPrompt<string>()
-                .Title("Please select [green] your option[/]")
-                .AddChoices(["New Game", "Show history", "Exit"])
+                .Title($"Please select [green] your option[/]. Difficulty: [blue][bold]{game.DifficultyLevel}[/][/]")
+                .AddChoices(["New Game", "Change difficulty", "Show history", "Exit"])
                 );
             switch (mainOption)
             {
                 case "New Game":
                     OperationMenu();
+                    break;
+                case "Change difficulty":
+                    ChangeDifficulty();
                     break;
                 case "Show history":
                     ShowHistory();
@@ -31,9 +34,19 @@ internal class UserInterface
                 case "Exit":
                     return;
             }
+            AnsiConsole.Clear();
         }
     }
 
+    private void ChangeDifficulty()
+    {
+        var dificultyLevel = AnsiConsole.Prompt(
+            new SelectionPrompt<Difficulty>()
+            .Title("Please select [green] a difficulty[/]")
+            .AddChoices(Enum.GetValues<Difficulty>())
+            );
+        game.DifficultyLevel = dificultyLevel;
+    }
 
     private void ShowHistory()
     {
@@ -61,7 +74,7 @@ internal class UserInterface
             foreach (var roundset in item.RoundSetHistory)
             {
                 table.AddRow(
-                    $"[blue]{round}[/]", 
+                    $"[blue]{round}[/][DarkOrange]({item.DifficultyLevel})[/]", 
                     $"[green]{item.Operation}[/]", 
                     $"[green]{roundset.FirstNumber}[/]", 
                     $"[cyan]{roundset.OperationAsString}[/]",
@@ -78,12 +91,16 @@ internal class UserInterface
         table.Columns[2].Footer = new Text($"{game.Score}", new Style(Color.Blue, decoration: Decoration.Bold));
 
         AnsiConsole.Write(table);
-
+        var choice = AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("Press enter key to continue:")
+            .AddChoices("Enter"));
     }
 
     public void OperationMenu()
     {
         RoundSet roundSet = new RoundSet();
+        roundSet.DifficultyLevel = game.DifficultyLevel;
 
         var operation = AnsiConsole.Prompt(
             new SelectionPrompt<Operations>()
@@ -94,7 +111,7 @@ internal class UserInterface
         roundSet.Operation = operation;
         for (int i = 0; i < roundSet.NumberOfQuestions; i++)
         {
-            Round round = new(operation);
+            Round round = new(operation, game.DifficultyLevel);
             ShowQuestion(round);
             roundSet.RoundSetHistory.Add(round);
         }
@@ -106,6 +123,12 @@ internal class UserInterface
                 ((item.Result == item.UserInput) ? "\t[blue][bold]CORRECT[/][/]" : "\t[red][bold]WRONG![/][/]"));
         }
         game.AllRoundSets.Add(roundSet);
+
+        var choice = AnsiConsole.Prompt(
+        new SelectionPrompt<string>()
+        .Title("Press enter key to continue:")
+        .AddChoices("Enter"));
+
     }
 
     private void ShowQuestion(Round round)
@@ -124,6 +147,7 @@ internal class UserInterface
         {
             AnsiConsole.MarkupLine("[green]Your answer is [/][red][bold]WRONG[/][/]!");
         }
+        
     }
 
 

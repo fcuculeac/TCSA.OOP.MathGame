@@ -11,11 +11,25 @@ internal class Round
     public int Result { get; set; }
     public int UserInput { get; set; }
 
-    public Round(Operations operation)
+    public Round(Operations operation, Difficulty difficultyLevel)
     {
         Operation = operation;
-        FirstNumber = Random.Shared.Next(10);
-        SecondNumber = Random.Shared.Next(10);
+        int MaxNumber = 0;
+        switch (difficultyLevel)
+        {
+            case Difficulty.Easy:
+                MaxNumber = 10;
+                break;
+            case Difficulty.Medium:
+                MaxNumber = 50;
+                break;
+            case Difficulty.Hard:
+                MaxNumber = 100;
+                break;
+        }
+
+        FirstNumber = Random.Shared.Next(MaxNumber);
+        SecondNumber = Random.Shared.Next(MaxNumber);
         
         
         switch (Operation)
@@ -23,6 +37,14 @@ internal class Round
             case Operations.Addition:
                 Result = FirstNumber + SecondNumber; OperationAsString = "+"; break;
             case Operations.Substraction:
+                // no negative result for easy difficulty
+                if (difficultyLevel == Difficulty.Easy)
+                {
+                    if (SecondNumber > FirstNumber)
+                    {
+                        (FirstNumber, SecondNumber) = (SecondNumber, FirstNumber);
+                    }
+                }
                 Result = FirstNumber - SecondNumber; OperationAsString = "-"; break;
             case Operations.Multilpy:
                 Result = FirstNumber * SecondNumber; OperationAsString = "*"; break;

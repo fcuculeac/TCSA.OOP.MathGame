@@ -9,4 +9,12 @@ internal class Enums
         Multilpy,
         Division
     }
+
+    public enum Difficulty
+    {
+        Easy,
+        Medium,
+        Hard
+    }
+
 }
