@@ -1,4 +1,5 @@
 ﻿using Spectre.Console;
+using System.Diagnostics;
 using System.Text;
 using static TCSA.OOP.MathGame.Enums;
 
@@ -7,7 +8,7 @@ namespace TCSA.OOP.MathGame;
 internal class UserInterface
 {
    
-    private GameController game = new();
+    private readonly GameController game = new();
     // select operation
 
     public void MainMenu()
@@ -84,6 +85,11 @@ internal class UserInterface
                     ((roundset.Result == roundset.UserInput) ? "[green]✓[/]" : "[bold red]X[/]")
                     );
             }
+            
+            table.AddRow(
+                "",
+                $"Total time to complete [blue]{item.TimeElapsed.TotalSeconds:F2}[/] seconds",
+                "", "", "", "", "", "");
         }
 
         table.Columns[0].Footer = new Text("");
@@ -91,7 +97,8 @@ internal class UserInterface
         table.Columns[2].Footer = new Text($"{game.Score}", new Style(Color.Blue, decoration: Decoration.Bold));
 
         AnsiConsole.Write(table);
-        var choice = AnsiConsole.Prompt(
+
+        AnsiConsole.Prompt(
             new SelectionPrompt<string>()
             .Title("Press enter key to continue:")
             .AddChoices("Enter"));
@@ -99,15 +106,20 @@ internal class UserInterface
 
     public void OperationMenu()
     {
-        RoundSet roundSet = new RoundSet();
-        roundSet.DifficultyLevel = game.DifficultyLevel;
+        RoundSet roundSet = new()
+        {
+            DifficultyLevel = game.DifficultyLevel
+        };
 
         var operation = AnsiConsole.Prompt(
             new SelectionPrompt<Operations>()
             .Title("Please select [green] an operation[/]")
             .AddChoices(Enum.GetValues<Operations>())
             );
-        
+        // add a timer
+        Stopwatch responseTimer = new();
+        responseTimer.Start();
+
         roundSet.Operation = operation;
         for (int i = 0; i < roundSet.NumberOfQuestions; i++)
         {
@@ -116,6 +128,10 @@ internal class UserInterface
             roundSet.RoundSetHistory.Add(round);
         }
         Console.WriteLine($"You score {game.Score} of {roundSet.NumberOfQuestions}");
+        // count time to complete
+        responseTimer.Stop();
+        roundSet.TimeElapsed = responseTimer.Elapsed;
+
         foreach (var item in roundSet.RoundSetHistory)
         {
             AnsiConsole.MarkupLine($"[green]{item.FirstNumber}[/] [cyan]{item.OperationAsString}[/] [green]{item.SecondNumber}[/] = " +
@@ -123,11 +139,12 @@ internal class UserInterface
                 ((item.Result == item.UserInput) ? "\t[blue][bold]CORRECT[/][/]" : "\t[red][bold]WRONG![/][/]"));
         }
         game.AllRoundSets.Add(roundSet);
+        AnsiConsole.MarkupLine($"[blue]Time to complete: {roundSet.TimeElapsed.TotalSeconds:F2} seconds[/]");
 
-        var choice = AnsiConsole.Prompt(
-        new SelectionPrompt<string>()
-        .Title("Press enter key to continue:")
-        .AddChoices("Enter"));
+        AnsiConsole.Prompt(
+            new SelectionPrompt<string>()
+            .Title("Press enter key to continue:")
+            .AddChoices("Enter"));
 
     }
 

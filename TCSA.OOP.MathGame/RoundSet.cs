@@ -9,4 +9,5 @@ internal class RoundSet
     public int NumberOfQuestions { get; } = 5;
     public Difficulty DifficultyLevel { get; set; }
 
+    public TimeSpan TimeElapsed { get; set; }
 }
