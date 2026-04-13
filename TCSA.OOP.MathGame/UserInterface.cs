@@ -39,6 +39,7 @@ internal class UserInterface
         }
     }
 
+
     private void ChangeDifficulty()
     {
         var dificultyLevel = AnsiConsole.Prompt(
@@ -116,6 +117,7 @@ internal class UserInterface
             .Title("Please select [green] an operation[/]")
             .AddChoices(Enum.GetValues<Operations>())
             );
+
         // add a timer
         Stopwatch responseTimer = new();
         responseTimer.Start();
