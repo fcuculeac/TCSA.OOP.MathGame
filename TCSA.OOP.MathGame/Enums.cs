@@ -1,4 +1,4 @@
-﻿namespace TCSA.OOP.MathGame;
+﻿namespace FlorinCuculeac.MathGame;
 
 internal class Enums
 {

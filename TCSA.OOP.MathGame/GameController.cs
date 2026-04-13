@@ -1,6 +1,6 @@
-﻿using static TCSA.OOP.MathGame.Enums;
+﻿using static FlorinCuculeac.MathGame.Enums;
 
-namespace TCSA.OOP.MathGame;
+namespace FlorinCuculeac.MathGame;
 
 internal class GameController
 {
