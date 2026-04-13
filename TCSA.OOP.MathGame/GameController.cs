@@ -3,8 +3,8 @@
 internal class GameController
 {
 
-    public List<Round> CurrentRound { get; set; } = [];
-
+    public List<RoundSet> AllRoundSets { get; set; } = [];
+    public int Score { get; set; } = 0;
 
 
 

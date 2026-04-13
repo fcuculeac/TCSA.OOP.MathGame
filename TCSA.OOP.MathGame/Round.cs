@@ -27,9 +27,8 @@ internal class Round
             case Operations.Multilpy:
                 Result = FirstNumber * SecondNumber; OperationAsString = "*"; break;
             case Operations.Division:
-                int aux = SecondNumber;
-                SecondNumber = FirstNumber * aux;
-                Result = SecondNumber / FirstNumber;
+                FirstNumber = SecondNumber * FirstNumber;
+                Result = FirstNumber / SecondNumber;
                 OperationAsString = "/";
                 break;
         }
